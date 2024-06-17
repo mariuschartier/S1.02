@@ -1,0 +1,88 @@
+#include <stdio.h>
+
+// Taille de la grille
+#define SIZE 9
+
+// Fonction pour vérifier si une valeur peut être placée à une position spécifique
+int isSafe(int grid[SIZE][SIZE], int row, int col, int num) {
+    // Vérifie la ligne
+    for (int x = 0; x <= 8; x++)
+        if (grid[row][x] == num)
+            return 0;
+
+    // Vérifie la colonne
+    for (int x = 0; x <= 8; x++)
+        if (grid[x][col] == num)
+            return 0;
+
+    // Vérifie la boîte
+    int startRow = row - row % 3, startCol = col - col % 3;
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            if (grid[i + startRow][j + startCol] == num)
+                return 0;
+
+    return 1;
+}
+
+// Fonction principale pour résoudre le Sudoku
+int solveSudoku(int grid[SIZE][SIZE], int row, int col) {
+    // Si aucune cellule ne reste, retourne true
+    if (row == SIZE - 1 && col == SIZE)
+        return 1;
+
+    // Trouver la prochaine cellule vide
+    if (col == SIZE) {
+        row++;
+        col = 0;
+    }
+
+    // Si la cellule est déjà remplie, passe à la suivante
+    if (grid[row][col] > 0)
+        return solveSudoku(grid, row, col + 1);
+
+    for (int num = 1; num <= SIZE; num++) {
+        // Vérifie si la valeur peut être placée à la position actuelle
+        if (isSafe(grid, row, col, num)) {
+            // Place la valeur
+            grid[row][col] = num;
+
+            // Passe à la prochaine cellule
+            if (solveSudoku(grid, row, col + 1))
+                return 1;
+        }
+
+        // Retire la valeur si elle ne peut pas être placée à la position actuelle
+        grid[row][col] = 0;
+    }
+
+    return 0;
+}
+
+// Fonction pour imprimer la grille
+void printGrid(int grid[SIZE][SIZE]) {
+    for (int row = 0; row < SIZE; row++) {
+        for (int col = 0; col < SIZE; col++)
+            printf("%d ", grid[row][col]);
+        printf("\n");
+    }
+}
+
+int main() {
+    int grid[SIZE][SIZE] = {{3, 0, 6, 5, 0, 8, 4, 0, 0},
+                           {5, 2, 0, 0, 0, 0, 0, 0, 0},
+                           {0, 8, 7, 0, 0, 0, 0, 3, 1},
+                           {0, 0, 3, 0, 0, 0, 0, 8, 0},
+                           {9, 0, 0, 8, 6, 0, 0, 0, 5},
+                           {0, 5, 0, 0, 9, 0, 6, 0, 0},
+                           {1, 3, 0, 0, 0, 0, 2, 5, 0},
+                           {0, 0, 0, 0, 0, 0, 0, 7, 4},
+                           {0, 0, 0, 0, 0, 6, 3, 0, 0}};
+
+    if (solveSudoku(grid, 0, 0) == 1)
+        printGrid(grid);
+    else
+        printf("No solution exists.");
+
+    return 0;
+}

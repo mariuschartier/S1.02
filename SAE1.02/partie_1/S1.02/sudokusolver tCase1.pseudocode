@@ -1,0 +1,57 @@
+type N = entier: 3;
+type TAILLE = entier: (N*N);
+type tCase = structure
+début
+    valeur: entier;
+    candidats[1..TAILLE]: entier;
+    nbCandidats: entier;
+fin
+type tGrille = tableau[1..TAILLE][1..TAILLE] de tCase;
+
+
+procédure ajouterCandidat(entF/sortF laCase : tCase, entF val : entier) c'est
+début
+    i,j,stock: entier;
+    pour i de TAILLE à 1 pas de -1 faire
+        si (laCase.candidats[i]>val) alors
+            pour j de TAILLE à i pas de -1 faire
+                laCase.candidats[j+1]:=laCase.candidats[j];
+            finfaire
+        finsi
+        laCase.candidats[i]:=val;
+    finfaire
+fin
+
+procédure retirerCandidat(entF/sortF laCase : tCase, entF val : entier) c'est
+début
+    i: entier;
+    pour i de val à TAILLE-1 pas de 1 faire
+        laCase.candidats[i]:=laCase.candidats[i+1];
+    finfaire
+    laCase.candidats[TAILLE]:=0;
+fin
+
+fonction estCandidat(entF laCase : tCase, entF val : entier) délivre booléen c'est
+début
+    verification : booléen;
+    verificatio:=faux;
+    i:entier;
+    pour i de 1 à TAILLE pas de 1 faire
+        si (laCase.candidats[i]==val) alors
+            verification:=vrai;
+        finsi
+    finfaire
+    retourne verification
+fin
+
+fonction nbCandidats(entF laCase : tCase) délivre entier c'est
+début
+    n,i : entier;
+    n:=0;
+    i:=1;
+    tant que (laCase.candidats[i]!=0) faire
+        n++;
+        i++;
+    finfaire
+    retourne n
+fin
